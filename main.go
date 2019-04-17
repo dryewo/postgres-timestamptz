@@ -12,7 +12,6 @@ type Test struct {
 	N    int
 	Name string
 	Ts   time.Time
-	Tstz time.Time
 }
 
 func main() {
@@ -47,7 +46,7 @@ func dumpAll(db *sqlx.DB) {
 	rows := []Test{}
 	db.Select(&rows, "SELECT * FROM test ORDER BY name, n;")
 	for _, r := range rows {
-		fmt.Printf("% 5d     %-35v% 12v% 12v          % 12v% 12v\n", r.N, r.Name, r.Ts.Format(form), r.Ts.UTC().Format(form), r.Tstz.Format(form), r.Tstz.UTC().Format(form))
+		fmt.Printf("%-30v% 12v% 12v\n", r.Name, r.Ts.Format(form), r.Ts.UTC().Format(form))
 	}
 }
 
@@ -63,10 +62,9 @@ func setTimezone(db *sqlx.DB, tz string) {
 
 func insertData(db *sqlx.DB) {
 	now := time.Now()
-	query := `INSERT INTO test (name, ts, tstz) VALUES ($1, $2, $3);`
 	fmt.Println("Inserting data with now()")
 	db.MustExec("INSERT INTO test (name) VALUES ('from default now()')")
-	db.MustExec("INSERT INTO test (name, ts, tstz) VALUES ('from now()', now(), now())")
+	db.MustExec("INSERT INTO test (name, ts) VALUES ('from now()', now())")
 	fmt.Printf("Inserting data with %v\n", now)
-	db.MustExec(query, "from golang time.Now()", now, now)
+	db.MustExec("INSERT INTO test (name, ts) VALUES ('from golang time.Now()', $1);", now)
 }
