@@ -64,7 +64,7 @@ func insertData(db *sqlx.DB) {
 	now := time.Now()
 	fmt.Println("Inserting data with now()")
 	db.MustExec("INSERT INTO test (name) VALUES ('from default now()')")
-	db.MustExec("INSERT INTO test (name, ts) VALUES ('from now()', now())")
+	db.MustExec("INSERT INTO test (name, ts) VALUES ('from now()', now() AT TIME ZONE 'UTC')")
 	fmt.Printf("Inserting data with %v\n", now)
-	db.MustExec("INSERT INTO test (name, ts) VALUES ('from golang time.Now()', $1);", now)
+	db.MustExec("INSERT INTO test (name, ts) VALUES ('from golang time.Now()', $1);", now.UTC())
 }
