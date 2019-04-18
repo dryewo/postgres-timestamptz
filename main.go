@@ -27,7 +27,7 @@ func main() {
 	fmt.Println("Using default timezone from DB")
 	insertData(db)
 
-	for i := 0; i < 5; i++ {
+	for i := 0; i < 3; i++ {
 		setRandomTimezone(db)
 		insertData(db)
 	}
